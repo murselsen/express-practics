@@ -10,6 +10,9 @@ import { env } from "./utils/env.js";
 import { getAllStudents, getStudentById } from "./services/students.js";
 import studentRouter from "./routers/studentRouter.js";
 
+// Middlewares
+import notFoundMiddleware from "./middlewares/notFoundMiddleware.js";
+
 const PORT = Number(env("PORT", 3000));
 
 export const startServer = () => {
@@ -35,7 +38,7 @@ export const startServer = () => {
 
   app.use("/students", studentRouter);
 
-  app.use();
+  app.use(notFoundMiddleware);
 
   app.use((err, req, res, next) => {
     res.status(500).json({
