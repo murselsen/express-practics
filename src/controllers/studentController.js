@@ -25,11 +25,12 @@ export const getStudentByIdController = async (req, res, next) => {
   const { studentId } = req.params;
   try {
     const student = await getStudentById(studentId);
-    // const student = students.find((s) => s.id === Number(studentId));
     if (!student) {
-      return res
-        .status(404)
-        .json(createResponse(false, 'Student not found', null, 404));
+      next({
+        status: 404,
+        message: 'Student not found',
+      });
+      return;
     }
     res
       .status(200)
