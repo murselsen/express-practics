@@ -1,19 +1,20 @@
 // Modules
-import express from "express";
-import pino from "pino-http";
-import cors from "cors";
+import express from 'express';
+import pino from 'pino-http';
+import cors from 'cors';
 
 // Utils
-import { env } from "./utils/env.js";
+import { env } from './utils/env.js';
 
 // Services
-import { getAllStudents, getStudentById } from "./services/students.js";
-import studentRouter from "./routers/studentRouter.js";
+import { getAllStudents, getStudentById } from './services/students.js';
+import studentRouter from './routers/studentRouter.js';
 
 // Middlewares
-import notFoundMiddleware from "./middlewares/notFoundMiddleware.js";
+import notFoundMiddleware from './middlewares/notFoundMiddleware.js';
+import serverErrorMiddleware from './middlewares/serverErrorMiddleware.js';
 
-const PORT = Number(env("PORT", 3000));
+const PORT = Number(env('PORT', 3000));
 
 export const startServer = () => {
   const app = express();
@@ -24,29 +25,22 @@ export const startServer = () => {
   app.use(
     pino({
       transport: {
-        target: "pino-pretty",
+        target: 'pino-pretty',
       },
-    }),
+    })
   );
 
-  app.get("/", (req, res) => {
+  app.get('/', (req, res) => {
     res.json({
       statusCode: 200,
-      message: "Hello world!",
+      message: 'Hello world!',
     });
   });
 
-  app.use("/students", studentRouter);
+  app.use('/students', studentRouter);
 
   app.use(notFoundMiddleware);
-
-  app.use((err, req, res, next) => {
-    res.status(500).json({
-      statusCode: 500,
-      message: "Something went wrong",
-      error: err.message,
-    });
-  });
+  app.use(serverErrorMiddleware);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
