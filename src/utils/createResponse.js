@@ -7,9 +7,9 @@ export const createResponse = (
 ) => {
   const result = {
     timestamp: new Date().toISOString(),
+    success,
     errorCode,
     statusCode,
-    success,
     message,
     data,
   };
