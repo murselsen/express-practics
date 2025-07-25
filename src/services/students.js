@@ -9,7 +9,7 @@ export const getAllStudents = async () => {
 
 export const getStudentById = async (id) => {
   console.log(`ID: ${id} Typeof ID: ${typeof id}`);
-  const student = await StudentsCollection.findById(id)
+  const student = await StudentsCollection.findById(id);
   console.log("Student:", student);
   if (!student) {
     return [];

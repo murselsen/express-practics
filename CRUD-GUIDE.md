@@ -115,7 +115,7 @@ const StudentSchema = new Schema(
   {
     timestamps: true, // createdAt ve updatedAt otomatik eklenir
     versionKey: false, // __v alanını kaldırır
-  }
+  },
 );
 
 // Model oluşturma
@@ -397,14 +397,14 @@ const updatedStudent = await Student.findByIdAndUpdate(
   {
     new: true, // Güncellenmiş veriyi döndür
     runValidators: true, // Validation kurallarını çalıştır
-  }
+  },
 );
 
 // findOneAndUpdate
 const student = await Student.findOneAndUpdate(
   { email: "ahmet@email.com" },
   { $set: { isActive: false } },
-  { new: true }
+  { new: true },
 );
 ```
 
@@ -414,7 +414,7 @@ const student = await Student.findOneAndUpdate(
 // Birden fazla dökümanı güncelle
 const result = await Student.updateMany(
   { grade: "12", isActive: true },
-  { $set: { status: "graduated" } }
+  { $set: { status: "graduated" } },
 );
 
 console.log(`${result.modifiedCount} öğrenci güncellendi`);
@@ -515,7 +515,7 @@ export const updateStudent = async (req, res) => {
 ```javascript
 // ID ile silme
 const deletedStudent = await Student.findByIdAndDelete(
-  "60d5ec49eb2e5c2a1c8b4567"
+  "60d5ec49eb2e5c2a1c8b4567",
 );
 
 // Koşullu silme
@@ -532,7 +532,7 @@ const result = await Student.deleteMany({ isActive: false });
 const softDeletedStudent = await Student.findByIdAndUpdate(
   studentId,
   { isActive: false },
-  { new: true }
+  { new: true },
 );
 
 // Soft delete için custom method
@@ -571,7 +571,7 @@ export const deleteStudent = async (req, res) => {
       deletedStudent = await Student.findByIdAndUpdate(
         id,
         { isActive: false },
-        { new: true }
+        { new: true },
       );
     }
 
@@ -909,7 +909,7 @@ console.log("✅ Öğrenci bulundu:", foundStudent.name);
 const updatedStudent = await Student.findByIdAndUpdate(
   createdStudent._id,
   { gpa: 3.8 },
-  { new: true }
+  { new: true },
 );
 console.log("✅ GPA güncellendi:", updatedStudent.gpa);
 
@@ -966,7 +966,7 @@ const studentSchema = new Schema(
     avgMark: { type: Number, required: true },
     onDuty: { type: Boolean, required: true, default: false },
   },
-  { timestamps: true, versionKey: false }
+  { timestamps: true, versionKey: false },
 );
 
 const StudentsCollection = model("students", studentSchema);
@@ -1048,33 +1048,33 @@ const onDutyStudents = await StudentsCollection.find({ onDuty: true });
 // 1. Tek kayıt güncelle
 const result = await StudentsCollection.updateOne(
   { name: "Ali Veli" },
-  { $set: { avgMark: 90.0, onDuty: true } }
+  { $set: { avgMark: 90.0, onDuty: true } },
 );
 
 // 2. Çoklu güncelleme
 const result = await StudentsCollection.updateMany(
   { age: { $gte: 20 } },
-  { $set: { onDuty: true } }
+  { $set: { onDuty: true } },
 );
 
 // 3. Bul ve güncelle (güncellenmiş kaydı döner)
 const updatedStudent = await StudentsCollection.findOneAndUpdate(
   { name: "Ali Veli" },
   { $set: { avgMark: 95.0 } },
-  { new: true } // Güncellenmiş versiyonu döner
+  { new: true }, // Güncellenmiş versiyonu döner
 );
 
 // 4. ID ile bul ve güncelle
 const student = await StudentsCollection.findByIdAndUpdate(
   "64a1b2c3d4e5f6789012345",
   { $set: { onDuty: false, avgMark: 87.5 } },
-  { new: true }
+  { new: true },
 );
 
 // 5. Increment işlemi (sayısal değer artırma)
 const incrementResult = await StudentsCollection.updateOne(
   { name: "Ali Veli" },
-  { $inc: { avgMark: 5 } } // avgMark'ı 5 puan artır
+  { $inc: { avgMark: 5 } }, // avgMark'ı 5 puan artır
 );
 ```
 
@@ -1094,7 +1094,7 @@ const deletedStudent = await StudentsCollection.findOneAndDelete({
 
 // 4. ID ile bul ve sil
 const deletedStudent = await StudentsCollection.findByIdAndDelete(
-  "64a1b2c3d4e5f6789012345"
+  "64a1b2c3d4e5f6789012345",
 );
 ```
 
@@ -1321,7 +1321,7 @@ export const searchStudents = async (searchTerm) => {
 export const updateMarksByGender = async (gender, markIncrease) => {
   return await StudentsCollection.updateMany(
     { gender: gender },
-    { $inc: { avgMark: markIncrease } }
+    { $inc: { avgMark: markIncrease } },
   );
 };
 ```

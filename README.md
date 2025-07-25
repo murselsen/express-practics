@@ -58,12 +58,10 @@ Bu proje, Express.js ve MongoDB kullanarak öğrenci yönetimi için RESTful API
    ```
 
 3. **Ortam değişkenlerini ayarlayın:**
-
    - Proje root dizininde `.env` dosyası oluşturun
    - Gerekli değişkenleri ekleyin (detaylar için [Ortam Değişkenleri](#ortam-değişkenleri) bölümüne bakın)
 
 4. **MongoDB'yi başlatın:**
-
    - Yerel MongoDB servisini başlatın veya MongoDB Atlas bağlantı string'ini kullanın
 
 5. **Uygulamayı çalıştırın:**

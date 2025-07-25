@@ -42,11 +42,11 @@ export const initMongoDB = async () => {
     // Yaygın hata türlerini kontrol et
     if (error.message.includes("authentication failed")) {
       console.error(
-        "🔑 Kimlik doğrulama hatası: Kullanıcı adı veya şifre yanlış"
+        "🔑 Kimlik doğrulama hatası: Kullanıcı adı veya şifre yanlış",
       );
     } else if (error.message.includes("serverSelectionTimeoutMS")) {
       console.error(
-        "⏰ Sunucu bağlantı zaman aşımı: Ağ bağlantısını kontrol edin"
+        "⏰ Sunucu bağlantı zaman aşımı: Ağ bağlantısını kontrol edin",
       );
     } else if (error.message.includes("getaddrinfo ENOTFOUND")) {
       console.error("🌐 DNS hatası: MongoDB URL'i kontrol edin");

@@ -26,7 +26,7 @@ export const startServer = () => {
       transport: {
         target: "pino-pretty",
       },
-    })
+    }),
   );
 
   app.get("/", (req, res) => {

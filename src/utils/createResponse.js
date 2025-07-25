@@ -3,7 +3,7 @@ export const createResponse = (
   message = "",
   data = null,
   statusCode = 200,
-  errorCode = null
+  errorCode = null,
 ) => {
   const result = {
     success,

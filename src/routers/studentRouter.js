@@ -18,7 +18,7 @@ studentRouter.get("/", async (req, res, next) => {
     res
       .status(200)
       .json(
-        createResponse(true, "Students fetched successfully", students, 200)
+        createResponse(true, "Students fetched successfully", students, 200),
       );
   } catch (error) {
     next(error);
