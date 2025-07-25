@@ -4,3 +4,5 @@ const notFoundMiddleware = (req, res, next) => {
     message: "Not found",
   });
 };
+
+export default notFoundMiddleware;
