@@ -6,12 +6,12 @@ export const createResponse = (
   errorCode = null,
 ) => {
   const result = {
+    timestamp: new Date().toISOString(),
+    errorCode,
+    statusCode,
     success,
     message,
     data,
-    errorCode,
-    statusCode,
-    timestamp: new Date().toISOString(),
   };
   console.log("Response created:", result);
   return result;
