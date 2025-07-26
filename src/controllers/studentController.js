@@ -25,7 +25,7 @@ export const getStudentByIdController = async (req, res, next) => {
   try {
     const student = await getStudentById(studentId);
     if (!student) {
-     throw createHttpError(404, 'Student not found');
+      throw createHttpError(404, 'Student not found');
     }
     res
       .status(200)
@@ -33,4 +33,17 @@ export const getStudentByIdController = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+export const createStudentController = async (req, res) => {
+  console.log('POST request to /students', req.body);
+
+  const body = req.body;
+  if (!body) {
+    throw createHttpError(404, 'Request body is missing');
+  }
+  res.status(200).json({
+    message: 'This endpoint is not implemented yet',
+    data: req.body,
+  });
 };
