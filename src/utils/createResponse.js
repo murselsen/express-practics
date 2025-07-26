@@ -1,18 +1,18 @@
 export const createResponse = (
   success = true,
-  message = "",
+  message = '',
   data = null,
   statusCode = 200,
-  errorCode = null,
+  errorCode = null
 ) => {
   const result = {
-    timestamp: new Date().toISOString(),
     success,
-    errorCode,
+    timestamp: new Date().toISOString(),
     statusCode,
     message,
+    errorCode,
     data,
   };
-  console.log("Response created:", result);
+  // console.log("Response created:", result);
   return result;
 };
