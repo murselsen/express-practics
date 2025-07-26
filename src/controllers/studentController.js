@@ -1,5 +1,6 @@
 import { getAllStudents, getStudentById } from '../services/students.js';
 import { createResponse } from '../utils/createResponse.js';
+import createHttpError from 'http-errors';
 
 // Controllers
 // Get all students
@@ -7,9 +8,7 @@ export const getAllStudentsController = async (req, res, next) => {
   try {
     const students = await getAllStudents();
     if (!students || students.length === 0) {
-      return res
-        .status(404)
-        .json(createResponse(false, 'No students found', null, 404));
+      throw createHttpError(404, 'No students found');
     }
     res
       .status(200)
@@ -26,11 +25,7 @@ export const getStudentByIdController = async (req, res, next) => {
   try {
     const student = await getStudentById(studentId);
     if (!student) {
-      next({
-        status: 404,
-        message: 'Student not found',
-      });
-      return;
+     throw createHttpError(404, 'Student not found');
     }
     res
       .status(200)
