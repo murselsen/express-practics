@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  createStudentController,
   getAllStudentsController,
   getStudentByIdController,
 } from '../controllers/studentController.js';
@@ -12,5 +13,7 @@ studentRouter.use((req, res, next) => {
 studentRouter.get('/', getAllStudentsController);
 
 studentRouter.get('/:studentId', getStudentByIdController);
+
+studentRouter.post('/', createStudentController);
 
 export default studentRouter;
