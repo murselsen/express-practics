@@ -7,7 +7,6 @@ import cors from 'cors';
 import { env } from './utils/env.js';
 
 // Services
-import { getAllStudents, getStudentById } from './services/students.js';
 import studentRouter from './routers/studentRouter.js';
 
 // Middlewares
