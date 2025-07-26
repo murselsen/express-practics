@@ -12,6 +12,7 @@ import studentRouter from './routers/studentRouter.js';
 // Middlewares
 import notFoundMiddleware from './middlewares/notFoundMiddleware.js';
 import serverErrorMiddleware from './middlewares/serverErrorMiddleware.js';
+import { createResponse } from './utils/createResponse.js';
 
 const PORT = Number(env('PORT', 3000));
 
@@ -30,10 +31,7 @@ export const startServer = () => {
   );
 
   app.get('/', (req, res) => {
-    res.json({
-      statusCode: 200,
-      message: 'Hello world!',
-    });
+    res.json(createResponse(true, 'Welcome to the Express API', null, 200));
   });
 
   app.use('/students', studentRouter);
