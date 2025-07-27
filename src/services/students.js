@@ -40,3 +40,14 @@ export const createStudent = async (studentData) => {
   console.log('New Student Created:', newStudent);
   return newStudent;
 };
+
+export const deleteStudent = async (id) => {
+  const student = await getStudentById(id);
+  if (!student) {
+    console.log(`Student with ID ${id} not found.`);
+    return false;
+  }
+  await StudentsCollection.findByIdAndDelete(id);
+  console.log(`Student with ID ${id} deleted successfully.`);
+  return true;
+};
