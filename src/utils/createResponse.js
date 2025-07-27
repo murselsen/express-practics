@@ -8,13 +8,18 @@ export const createResponse = (
   const result = {
     success,
     statusCode,
-    error: {
-      code: errorCode,
-    },
+
     message,
     timestamp: new Date().toISOString(),
-    data,
   };
+
+  if (data) {
+    result['data'] = data;
+  }
+  if (errorCode) {
+    result['error'] = errorCode;
+  }
+
   switch (statusCode) {
     case 404:
       console.error('Error:', result);
