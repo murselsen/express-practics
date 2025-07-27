@@ -2,8 +2,6 @@ import { createResponse } from '../utils/createResponse.js';
 import { HttpError } from 'http-errors';
 
 const serverErrorMiddleware = (err, req, res, next) => {
-  console.error('Internal Server Error:');
-  console.error(Object.keys(err));
   if (err instanceof HttpError) {
     res
       .status(err.status)
