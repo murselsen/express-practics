@@ -7,12 +7,33 @@ export const createResponse = (
 ) => {
   const result = {
     success,
-    timestamp: new Date().toISOString(),
     statusCode,
+    error: {
+      code: errorCode,
+    },
     message,
-    errorCode,
+    timestamp: new Date().toISOString(),
     data,
   };
-  // console.log("Response created:", result);
+  switch (statusCode) {
+    case 404:
+      console.error('Error:', result);
+      break;
+    case 400:
+      console.warn('Bad Request:', result);
+      break;
+    case 409:
+      console.warn('Conflict:', result);
+      break;
+    case 422:
+      console.warn('Unprocessable Entity:', result);
+      break;
+    case 500:
+      console.error('Internal Server Error:', result);
+      break;
+    default:
+      console.log('Success:', result);
+      break;
+  }
   return result;
 };
