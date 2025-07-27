@@ -7,11 +7,16 @@ const validateParams = (req, res, next) => {
   let errorMessage = '';
   params.forEach(([key, value]) => {
     console.log(`Parameter: ${key}, Value: ${value}`);
-    if (params[key] === undefined || params[key] === null) {
+    value = String(value)?.trim();
+    if (value === '') {
       errorMessage += `Parameter ${key} is missing.\n`;
     }
   });
-  res
+
+  if (errorMessage === '') {
+    next();
+  } else {
+    res
       .status(422)
       .json(
         createResponse(
@@ -23,8 +28,6 @@ const validateParams = (req, res, next) => {
         )
       );
   }
-
-  next();
 };
 
 export default validateParams;
