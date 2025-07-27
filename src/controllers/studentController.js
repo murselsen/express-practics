@@ -61,3 +61,14 @@ export const createStudentController = async (req, res) => {
     .status(201)
     .json(createResponse(true, 'Student created successfully', body, 201));
 };
+
+export const deleteStudentController = async (req, res, next) => {
+  const { studentId } = req.params;
+  try {
+    if (typeof studentId !== 'string') {
+      throw createHttpError(400, 'Invalid student ID format');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
