@@ -63,7 +63,7 @@ export const deleteStudentController = async (req, res, next) => {
   try {
     res
       .status(200)
-      .json(createResponse(true, 'Student deleted successfully', null, 204));
+      .json(createResponse(true, 'Student is deleted successfully', null, 204));
   } catch (error) {
     next(error);
   }
