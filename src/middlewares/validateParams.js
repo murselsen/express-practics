@@ -3,22 +3,27 @@ import { createResponse } from '../utils/createResponse.js';
 const validateParams = (req, res, next) => {
   console.log('Validating request parameters:', req.params);
   const params = Object.entries(req.params);
+
+  let errorMessage = '';
   params.forEach(([key, value]) => {
     console.log(`Parameter: ${key}, Value: ${value}`);
+    if (params[key] === undefined || params[key] === null) {
+      errorMessage += `Parameter ${key} is missing.\n`;
+    }
   });
-  if (params.length === 0) {
-    return res
+  res
       .status(422)
       .json(
         createResponse(
           false,
-          'No parameters provided',
+          errorMessage || 'Missing required parameters',
           null,
           422,
           'MISSING_PARAMETERS'
         )
       );
   }
+
   next();
 };
 
