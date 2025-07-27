@@ -1,5 +1,7 @@
 # Express Practice - Student Management API
 
+[![express-practics](https://wakatime.com/badge/user/602e419d-f1c9-4979-ac85-a3da5d93f7e7/project/9c313cfd-f326-4f61-aa69-b6fea69cdcb1.svg)](https://wakatime.com/badge/user/602e419d-f1c9-4979-ac85-a3da5d93f7e7/project/9c313cfd-f326-4f61-aa69-b6fea69cdcb1)
+
 Bu proje, Express.js ve MongoDB kullanarak öğrenci yönetimi için RESTful API geliştirme pratiği yapmak amacıyla oluşturulmuştur.
 
 ## 📋 İçindekiler
