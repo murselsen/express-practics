@@ -1,4 +1,9 @@
-import { getAllStudents, getStudentById } from '../services/students.js';
+import {
+  getAllStudents,
+  getStudentById,
+  isStudentExists,
+  createStudent,
+} from '../services/students.js';
 import { createResponse } from '../utils/createResponse.js';
 import createHttpError from 'http-errors';
 
@@ -23,6 +28,9 @@ export const getAllStudentsController = async (req, res, next) => {
 export const getStudentByIdController = async (req, res, next) => {
   const { studentId } = req.params;
   try {
+    if (typeof studentId !== 'string') {
+      throw createHttpError(400, 'Invalid student ID format');
+    }
     const student = await getStudentById(studentId);
     if (!student) {
       throw createHttpError(404, 'Student not found');
@@ -40,10 +48,16 @@ export const createStudentController = async (req, res) => {
 
   const body = req.body;
   if (!body) {
-    throw createHttpError(404, 'Request body is missing');
+    throw createHttpError(400, 'Request body is missing');
   }
-  res.status(200).json({
-    message: 'This endpoint is not implemented yet',
-    data: req.body,
-  });
+  const isStudentExistsResult = await isStudentExists(body.name);
+  if (isStudentExistsResult) {
+    throw createHttpError(409, 'Student with this name already exists');
+  }
+  console.log('Creating new student with data:', body);
+
+  await createStudent(body);
+  res
+    .status(201)
+    .json(createResponse(true, 'Student created successfully', body, 201));
 };
