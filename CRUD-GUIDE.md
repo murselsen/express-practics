@@ -50,40 +50,40 @@
 ### Schema Tanımlama
 
 ```javascript
-import { Schema, model } from "mongoose";
+import { Schema, model } from 'mongoose';
 
 const StudentSchema = new Schema(
   {
     name: {
       type: String,
-      required: [true, "İsim zorunludur"],
+      required: [true, 'İsim zorunludur'],
       trim: true,
-      minlength: [2, "İsim en az 2 karakter olmalıdır"],
-      maxlength: [50, "İsim en fazla 50 karakter olabilir"],
+      minlength: [2, 'İsim en az 2 karakter olmalıdır'],
+      maxlength: [50, 'İsim en fazla 50 karakter olabilir'],
     },
     email: {
       type: String,
-      required: [true, "Email zorunludur"],
+      required: [true, 'Email zorunludur'],
       unique: true,
       lowercase: true,
       trim: true,
       match: [
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        "Geçerli bir email adresi giriniz",
+        'Geçerli bir email adresi giriniz',
       ],
     },
     age: {
       type: Number,
-      required: [true, "Yaş zorunludur"],
-      min: [16, "Yaş en az 16 olmalıdır"],
-      max: [100, "Yaş en fazla 100 olabilir"],
+      required: [true, 'Yaş zorunludur'],
+      min: [16, 'Yaş en az 16 olmalıdır'],
+      max: [100, 'Yaş en fazla 100 olabilir'],
     },
     grade: {
       type: String,
-      required: [true, "Sınıf zorunludur"],
+      required: [true, 'Sınıf zorunludur'],
       enum: {
-        values: ["9", "10", "11", "12"],
-        message: "Sınıf 9, 10, 11 veya 12 olmalıdır",
+        values: ['9', '10', '11', '12'],
+        message: 'Sınıf 9, 10, 11 veya 12 olmalıdır',
       },
     },
     subjects: {
@@ -93,7 +93,7 @@ const StudentSchema = new Schema(
         validator: function (subjects) {
           return subjects.length <= 10;
         },
-        message: "Maksimum 10 ders seçilebilir",
+        message: 'Maksimum 10 ders seçilebilir',
       },
     },
     gpa: {
@@ -115,11 +115,11 @@ const StudentSchema = new Schema(
   {
     timestamps: true, // createdAt ve updatedAt otomatik eklenir
     versionKey: false, // __v alanını kaldırır
-  },
+  }
 );
 
 // Model oluşturma
-const Student = model("Student", StudentSchema);
+const Student = model('Student', StudentSchema);
 export default Student;
 ```
 
@@ -154,20 +154,20 @@ export default Student;
 ```javascript
 // Yöntem 1: new kullanarak
 const student = new Student({
-  name: "Ahmet Yılmaz",
-  email: "ahmet@email.com",
+  name: 'Ahmet Yılmaz',
+  email: 'ahmet@email.com',
   age: 17,
-  grade: "11",
-  subjects: ["Matematik", "Fizik"],
+  grade: '11',
+  subjects: ['Matematik', 'Fizik'],
 });
 const savedStudent = await student.save();
 
 // Yöntem 2: create() kullanarak
 const student = await Student.create({
-  name: "Ayşe Demir",
-  email: "ayse@email.com",
+  name: 'Ayşe Demir',
+  email: 'ayse@email.com',
   age: 16,
-  grade: "10",
+  grade: '10',
 });
 ```
 
@@ -176,16 +176,16 @@ const student = await Student.create({
 ```javascript
 const students = await Student.insertMany([
   {
-    name: "Mehmet Kaya",
-    email: "mehmet@email.com",
+    name: 'Mehmet Kaya',
+    email: 'mehmet@email.com',
     age: 18,
-    grade: "12",
+    grade: '12',
   },
   {
-    name: "Fatma Özkan",
-    email: "fatma@email.com",
+    name: 'Fatma Özkan',
+    email: 'fatma@email.com',
     age: 17,
-    grade: "11",
+    grade: '11',
   },
 ]);
 ```
@@ -201,16 +201,16 @@ export const createStudent = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: "Öğrenci başarıyla oluşturuldu",
+      message: 'Öğrenci başarıyla oluşturuldu',
       data: savedStudent,
     });
   } catch (error) {
     // Validation hatası
-    if (error.name === "ValidationError") {
+    if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
         success: false,
-        message: "Doğrulama hatası",
+        message: 'Doğrulama hatası',
         errors: errors,
       });
     }
@@ -219,13 +219,13 @@ export const createStudent = async (req, res) => {
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
-        message: "Bu email adresi zaten kullanılmakta",
+        message: 'Bu email adresi zaten kullanılmakta',
       });
     }
 
     res.status(500).json({
       success: false,
-      message: "Sunucu hatası",
+      message: 'Sunucu hatası',
       error: error.message,
     });
   }
@@ -243,10 +243,10 @@ export const createStudent = async (req, res) => {
 const allStudents = await Student.find();
 
 // Tek döküman getir (ID ile)
-const student = await Student.findById("60d5ec49eb2e5c2a1c8b4567");
+const student = await Student.findById('60d5ec49eb2e5c2a1c8b4567');
 
 // İlk eşleşen dökümanı getir
-const student = await Student.findOne({ email: "ahmet@email.com" });
+const student = await Student.findOne({ email: 'ahmet@email.com' });
 
 // Sayım
 const count = await Student.countDocuments({ isActive: true });
@@ -257,18 +257,18 @@ const count = await Student.countDocuments({ isActive: true });
 ```javascript
 // Koşullu sorgular
 const activeStudents = await Student.find({ isActive: true });
-const grade11Students = await Student.find({ grade: "11" });
+const grade11Students = await Student.find({ grade: '11' });
 
 // Çoklu koşul
 const topStudents = await Student.find({
   gpa: { $gte: 3.5 },
-  grade: { $in: ["11", "12"] },
+  grade: { $in: ['11', '12'] },
   isActive: true,
 });
 
 // Regex ile arama
 const searchResults = await Student.find({
-  name: { $regex: "ahmet", $options: "i" },
+  name: { $regex: 'ahmet', $options: 'i' },
 });
 
 // Yaş aralığı
@@ -281,10 +281,10 @@ const teenStudents = await Student.find({
 
 ```javascript
 // Sadece belirli alanları getir
-const students = await Student.find().select("name email grade gpa");
+const students = await Student.find().select('name email grade gpa');
 
 // Belirli alanları hariç tut
-const students = await Student.find().select("-__v -createdAt");
+const students = await Student.find().select('-__v -createdAt');
 ```
 
 ### 4. Sıralama
@@ -321,8 +321,8 @@ export const getAllStudents = async (req, res) => {
     const {
       page = 1,
       limit = 10,
-      sort = "name",
-      order = "asc",
+      sort = 'name',
+      order = 'asc',
       grade,
       isActive,
       search,
@@ -331,18 +331,18 @@ export const getAllStudents = async (req, res) => {
     // Filtreleri oluştur
     const filters = {};
     if (grade) filters.grade = grade;
-    if (isActive !== undefined) filters.isActive = isActive === "true";
+    if (isActive !== undefined) filters.isActive = isActive === 'true';
 
     // Arama filtresi
     if (search) {
       filters.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { email: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
       ];
     }
 
     // Sıralama
-    const sortOrder = order === "desc" ? -1 : 1;
+    const sortOrder = order === 'desc' ? -1 : 1;
     const sortObj = { [sort]: sortOrder };
 
     // Pagination
@@ -354,7 +354,7 @@ export const getAllStudents = async (req, res) => {
         .sort(sortObj)
         .skip(skip)
         .limit(parseInt(limit))
-        .select("-__v"),
+        .select('-__v'),
       Student.countDocuments(filters),
     ]);
 
@@ -376,7 +376,7 @@ export const getAllStudents = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Sunucu hatası",
+      message: 'Sunucu hatası',
       error: error.message,
     });
   }
@@ -392,19 +392,19 @@ export const getAllStudents = async (req, res) => {
 ```javascript
 // Tek döküman güncelleme
 const updatedStudent = await Student.findByIdAndUpdate(
-  "60d5ec49eb2e5c2a1c8b4567",
+  '60d5ec49eb2e5c2a1c8b4567',
   { gpa: 3.8, age: 18 },
   {
     new: true, // Güncellenmiş veriyi döndür
     runValidators: true, // Validation kurallarını çalıştır
-  },
+  }
 );
 
 // findOneAndUpdate
 const student = await Student.findOneAndUpdate(
-  { email: "ahmet@email.com" },
+  { email: 'ahmet@email.com' },
   { $set: { isActive: false } },
-  { new: true },
+  { new: true }
 );
 ```
 
@@ -413,8 +413,8 @@ const student = await Student.findOneAndUpdate(
 ```javascript
 // Birden fazla dökümanı güncelle
 const result = await Student.updateMany(
-  { grade: "12", isActive: true },
-  { $set: { status: "graduated" } },
+  { grade: '12', isActive: true },
+  { $set: { status: 'graduated' } }
 );
 
 console.log(`${result.modifiedCount} öğrenci güncellendi`);
@@ -425,15 +425,15 @@ console.log(`${result.modifiedCount} öğrenci güncellendi`);
 ```javascript
 // Array'e eleman ekleme
 await Student.findByIdAndUpdate(studentId, {
-  $push: { subjects: "İngilizce" },
+  $push: { subjects: 'İngilizce' },
 });
 
 // Array'den eleman çıkarma
-await Student.findByIdAndUpdate(studentId, { $pull: { subjects: "Tarih" } });
+await Student.findByIdAndUpdate(studentId, { $pull: { subjects: 'Tarih' } });
 
 // Array'e çoklu eleman ekleme
 await Student.findByIdAndUpdate(studentId, {
-  $addToSet: { subjects: { $each: ["Kimya", "Biyoloji"] } },
+  $addToSet: { subjects: { $each: ['Kimya', 'Biyoloji'] } },
 });
 ```
 
@@ -443,8 +443,8 @@ await Student.findByIdAndUpdate(studentId, {
 // Nested object alanlarını güncelle
 await Student.findByIdAndUpdate(studentId, {
   $set: {
-    "address.city": "İstanbul",
-    "address.zipCode": "34000",
+    'address.city': 'İstanbul',
+    'address.zipCode': '34000',
   },
 });
 ```
@@ -461,7 +461,7 @@ export const updateStudent = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Geçersiz öğrenci ID",
+        message: 'Geçersiz öğrenci ID',
       });
     }
 
@@ -473,33 +473,33 @@ export const updateStudent = async (req, res) => {
     const updatedStudent = await Student.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
-    }).select("-__v");
+    }).select('-__v');
 
     if (!updatedStudent) {
       return res.status(404).json({
         success: false,
-        message: "Öğrenci bulunamadı",
+        message: 'Öğrenci bulunamadı',
       });
     }
 
     res.status(200).json({
       success: true,
-      message: "Öğrenci başarıyla güncellendi",
+      message: 'Öğrenci başarıyla güncellendi',
       data: updatedStudent,
     });
   } catch (error) {
-    if (error.name === "ValidationError") {
+    if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
         success: false,
-        message: "Doğrulama hatası",
+        message: 'Doğrulama hatası',
         errors: errors,
       });
     }
 
     res.status(500).json({
       success: false,
-      message: "Sunucu hatası",
+      message: 'Sunucu hatası',
       error: error.message,
     });
   }
@@ -515,11 +515,11 @@ export const updateStudent = async (req, res) => {
 ```javascript
 // ID ile silme
 const deletedStudent = await Student.findByIdAndDelete(
-  "60d5ec49eb2e5c2a1c8b4567",
+  '60d5ec49eb2e5c2a1c8b4567'
 );
 
 // Koşullu silme
-const result = await Student.deleteOne({ email: "ahmet@email.com" });
+const result = await Student.deleteOne({ email: 'ahmet@email.com' });
 
 // Çoklu silme
 const result = await Student.deleteMany({ isActive: false });
@@ -532,7 +532,7 @@ const result = await Student.deleteMany({ isActive: false });
 const softDeletedStudent = await Student.findByIdAndUpdate(
   studentId,
   { isActive: false },
-  { new: true },
+  { new: true }
 );
 
 // Soft delete için custom method
@@ -557,13 +557,13 @@ export const deleteStudent = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         success: false,
-        message: "Geçersiz öğrenci ID",
+        message: 'Geçersiz öğrenci ID',
       });
     }
 
     let deletedStudent;
 
-    if (permanent === "true") {
+    if (permanent === 'true') {
       // Kalıcı silme
       deletedStudent = await Student.findByIdAndDelete(id);
     } else {
@@ -571,29 +571,29 @@ export const deleteStudent = async (req, res) => {
       deletedStudent = await Student.findByIdAndUpdate(
         id,
         { isActive: false },
-        { new: true },
+        { new: true }
       );
     }
 
     if (!deletedStudent) {
       return res.status(404).json({
         success: false,
-        message: "Öğrenci bulunamadı",
+        message: 'Öğrenci bulunamadı',
       });
     }
 
     res.status(200).json({
       success: true,
       message:
-        permanent === "true"
-          ? "Öğrenci kalıcı olarak silindi"
-          : "Öğrenci deaktif edildi",
+        permanent === 'true'
+          ? 'Öğrenci kalıcı olarak silindi'
+          : 'Öğrenci deaktif edildi',
       data: deletedStudent,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Sunucu hatası",
+      message: 'Sunucu hatası',
       error: error.message,
     });
   }
@@ -612,11 +612,11 @@ const gradeStats = await Student.aggregate([
   { $match: { isActive: true } },
   {
     $group: {
-      _id: "$grade",
+      _id: '$grade',
       count: { $sum: 1 },
-      averageGPA: { $avg: "$gpa" },
-      maxGPA: { $max: "$gpa" },
-      minAge: { $min: "$age" },
+      averageGPA: { $avg: '$gpa' },
+      maxGPA: { $max: '$gpa' },
+      minAge: { $min: '$age' },
     },
   },
   { $sort: { _id: 1 } },
@@ -626,9 +626,9 @@ const gradeStats = await Student.aggregate([
 const cityDistribution = await Student.aggregate([
   {
     $group: {
-      _id: "$address.city",
+      _id: '$address.city',
       studentCount: { $sum: 1 },
-      averageGPA: { $avg: "$gpa" },
+      averageGPA: { $avg: '$gpa' },
     },
   },
   { $sort: { studentCount: -1 } },
@@ -645,19 +645,19 @@ const complexQuery = await Student.find({
     { age: { $gte: 17 } },
     { gpa: { $gte: 3.0 } },
     {
-      $or: [{ grade: "11" }, { grade: "12" }],
+      $or: [{ grade: '11' }, { grade: '12' }],
     },
   ],
 });
 
 // Array arama
 const mathStudents = await Student.find({
-  subjects: { $in: ["Matematik"] },
+  subjects: { $in: ['Matematik'] },
 });
 
 // Existence kontrolü
 const studentsWithAddress = await Student.find({
-  "address.city": { $exists: true, $ne: null },
+  'address.city': { $exists: true, $ne: null },
 });
 ```
 
@@ -666,13 +666,13 @@ const studentsWithAddress = await Student.find({
 ```javascript
 // Schema'da text index oluştur
 StudentSchema.index({
-  name: "text",
-  email: "text",
+  name: 'text',
+  email: 'text',
 });
 
 // Text search
 const searchResults = await Student.find({
-  $text: { $search: "ahmet matematik" },
+  $text: { $search: 'ahmet matematik' },
 });
 ```
 
@@ -683,28 +683,28 @@ const searchResults = await Student.find({
 ### REST API Routes
 
 ```javascript
-import { Router } from "express";
-import { studentController } from "../controllers/studentController.js";
+import { Router } from 'express';
+import { studentController } from '../controllers/studentController.js';
 
 const router = Router();
 
 // CREATE
-router.post("/", studentController.createStudent);
+router.post('/', studentController.createStudent);
 
 // READ
-router.get("/", studentController.getAllStudents);
-router.get("/stats", studentController.getStudentStats);
-router.get("/:id", studentController.getStudentById);
+router.get('/', studentController.getAllStudents);
+router.get('/stats', studentController.getStudentStats);
+router.get('/:id', studentController.getStudentById);
 
 // UPDATE
-router.put("/:id", studentController.updateStudent);
-router.patch("/:id", studentController.updateStudent);
+router.put('/:id', studentController.updateStudent);
+router.patch('/:id', studentController.updateStudent);
 
 // DELETE
-router.delete("/:id", studentController.deleteStudent);
+router.delete('/:id', studentController.deleteStudent);
 
 // SPECIAL
-router.patch("/:id/reactivate", studentController.reactivateStudent);
+router.patch('/:id/reactivate', studentController.reactivateStudent);
 
 export default router;
 ```
@@ -792,20 +792,20 @@ const StudentSchema = new Schema({
 const StudentSchema = new Schema({
   email: {
     type: String,
-    required: [true, "Email zorunludur"],
+    required: [true, 'Email zorunludur'],
     unique: true,
     lowercase: true,
     trim: true,
-    match: [/^\w+@\w+\.\w{2,3}$/, "Geçerli email formatı gerekli"],
+    match: [/^\w+@\w+\.\w{2,3}$/, 'Geçerli email formatı gerekli'],
   },
   age: {
     type: Number,
-    required: [true, "Yaş zorunludur"],
-    min: [16, "Yaş en az 16 olmalı"],
-    max: [100, "Yaş en fazla 100 olabilir"],
+    required: [true, 'Yaş zorunludur'],
+    min: [16, 'Yaş en az 16 olmalı'],
+    max: [100, 'Yaş en fazla 100 olabilir'],
     validate: {
       validator: Number.isInteger,
-      message: "Yaş tam sayı olmalı",
+      message: 'Yaş tam sayı olmalı',
     },
   },
 });
@@ -816,11 +816,11 @@ const StudentSchema = new Schema({
 ```javascript
 export const handleDatabaseError = (error, res) => {
   // Validation error
-  if (error.name === "ValidationError") {
+  if (error.name === 'ValidationError') {
     const errors = Object.values(error.errors).map((err) => err.message);
     return res.status(400).json({
       success: false,
-      message: "Doğrulama hatası",
+      message: 'Doğrulama hatası',
       errors,
     });
   }
@@ -835,17 +835,17 @@ export const handleDatabaseError = (error, res) => {
   }
 
   // Cast error
-  if (error.name === "CastError") {
+  if (error.name === 'CastError') {
     return res.status(400).json({
       success: false,
-      message: "Geçersiz ID formatı",
+      message: 'Geçersiz ID formatı',
     });
   }
 
   // Generic error
   return res.status(500).json({
     success: false,
-    message: "Sunucu hatası",
+    message: 'Sunucu hatası',
     error: error.message,
   });
 };
@@ -860,7 +860,7 @@ StudentSchema.index({ grade: 1, isActive: 1 });
 StudentSchema.index({ createdAt: -1 });
 
 // Projection kullan
-const students = await Student.find().select("name email grade gpa").lean(); // Plain JavaScript objects
+const students = await Student.find().select('name email grade gpa').lean(); // Plain JavaScript objects
 
 // Pagination ile memory kullanımını sınırla
 const limit = Math.min(req.query.limit || 10, 100);
@@ -870,16 +870,16 @@ const limit = Math.min(req.query.limit || 10, 100);
 
 ```javascript
 // Input sanitization
-import mongoSanitize from "express-mongo-sanitize";
+import mongoSanitize from 'express-mongo-sanitize';
 app.use(mongoSanitize());
 
 // Rate limiting
-import rateLimit from "express-rate-limit";
+import rateLimit from 'express-rate-limit';
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 dakika
   max: 100, // maksimum 100 istek
 });
-app.use("/api/", limiter);
+app.use('/api/', limiter);
 ```
 
 ---
@@ -889,37 +889,37 @@ app.use("/api/", limiter);
 ```javascript
 // Test verisi oluşturma
 const testStudent = {
-  name: "Test Öğrenci",
-  email: "test@email.com",
+  name: 'Test Öğrenci',
+  email: 'test@email.com',
   age: 17,
-  grade: "11",
-  subjects: ["Matematik", "Fizik"],
+  grade: '11',
+  subjects: ['Matematik', 'Fizik'],
   gpa: 3.5,
 };
 
 // 1. CREATE test
 const createdStudent = await Student.create(testStudent);
-console.log("✅ Öğrenci oluşturuldu:", createdStudent._id);
+console.log('✅ Öğrenci oluşturuldu:', createdStudent._id);
 
 // 2. READ test
 const foundStudent = await Student.findById(createdStudent._id);
-console.log("✅ Öğrenci bulundu:", foundStudent.name);
+console.log('✅ Öğrenci bulundu:', foundStudent.name);
 
 // 3. UPDATE test
 const updatedStudent = await Student.findByIdAndUpdate(
   createdStudent._id,
   { gpa: 3.8 },
-  { new: true },
+  { new: true }
 );
-console.log("✅ GPA güncellendi:", updatedStudent.gpa);
+console.log('✅ GPA güncellendi:', updatedStudent.gpa);
 
 // 4. DELETE test (soft)
 await Student.findByIdAndUpdate(createdStudent._id, { isActive: false });
-console.log("✅ Öğrenci deaktif edildi");
+console.log('✅ Öğrenci deaktif edildi');
 
 // 5. Hard DELETE test
 await Student.findByIdAndDelete(createdStudent._id);
-console.log("✅ Öğrenci kalıcı olarak silindi");
+console.log('✅ Öğrenci kalıcı olarak silindi');
 ```
 
 ---
@@ -956,20 +956,20 @@ await student.save();
 Mevcut `Student.js` modeliniz:
 
 ```javascript
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
 const studentSchema = new Schema(
   {
     name: { type: String, required: true },
     age: { type: Number, required: true },
-    gender: { type: String, required: true, enum: ["male", "female", "other"] },
+    gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
     avgMark: { type: Number, required: true },
     onDuty: { type: Boolean, required: true, default: false },
   },
-  { timestamps: true, versionKey: false },
+  { timestamps: true, versionKey: false }
 );
 
-const StudentsCollection = model("students", studentSchema);
+const StudentsCollection = model('students', studentSchema);
 export default StudentsCollection;
 ```
 
@@ -978,9 +978,9 @@ export default StudentsCollection;
 ```javascript
 // 1. new + save
 const student = new StudentsCollection({
-  name: "Ali Veli",
+  name: 'Ali Veli',
   age: 20,
-  gender: "male",
+  gender: 'male',
   avgMark: 85.5,
   onDuty: false,
 });
@@ -988,17 +988,17 @@ await student.save();
 
 // 2. create (direkt oluşturma)
 const student = await StudentsCollection.create({
-  name: "Ayşe Fatma",
+  name: 'Ayşe Fatma',
   age: 19,
-  gender: "female",
+  gender: 'female',
   avgMark: 92.0,
   onDuty: true,
 });
 
 // 3. insertMany (çoklu oluşturma)
 const students = await StudentsCollection.insertMany([
-  { name: "Mehmet", age: 21, gender: "male", avgMark: 78.5, onDuty: false },
-  { name: "Zeynep", age: 20, gender: "female", avgMark: 88.0, onDuty: true },
+  { name: 'Mehmet', age: 21, gender: 'male', avgMark: 78.5, onDuty: false },
+  { name: 'Zeynep', age: 20, gender: 'female', avgMark: 88.0, onDuty: true },
 ]);
 ```
 
@@ -1009,16 +1009,16 @@ const students = await StudentsCollection.insertMany([
 const allStudents = await StudentsCollection.find();
 
 // 2. Koşullu arama
-const maleStudents = await StudentsCollection.find({ gender: "male" });
+const maleStudents = await StudentsCollection.find({ gender: 'male' });
 
 // 3. Tek kayıt getir
-const student = await StudentsCollection.findOne({ name: "Ali Veli" });
+const student = await StudentsCollection.findOne({ name: 'Ali Veli' });
 
 // 4. ID ile getir
-const student = await StudentsCollection.findById("64a1b2c3d4e5f6789012345");
+const student = await StudentsCollection.findById('64a1b2c3d4e5f6789012345');
 
 // 5. Projeksiyonla (belirli alanlar)
-const students = await StudentsCollection.find({}, "name age avgMark");
+const students = await StudentsCollection.find({}, 'name age avgMark');
 
 // 6. Sıralama ve limit
 const topStudents = await StudentsCollection.find()
@@ -1047,34 +1047,34 @@ const onDutyStudents = await StudentsCollection.find({ onDuty: true });
 ```javascript
 // 1. Tek kayıt güncelle
 const result = await StudentsCollection.updateOne(
-  { name: "Ali Veli" },
-  { $set: { avgMark: 90.0, onDuty: true } },
+  { name: 'Ali Veli' },
+  { $set: { avgMark: 90.0, onDuty: true } }
 );
 
 // 2. Çoklu güncelleme
 const result = await StudentsCollection.updateMany(
   { age: { $gte: 20 } },
-  { $set: { onDuty: true } },
+  { $set: { onDuty: true } }
 );
 
 // 3. Bul ve güncelle (güncellenmiş kaydı döner)
 const updatedStudent = await StudentsCollection.findOneAndUpdate(
-  { name: "Ali Veli" },
+  { name: 'Ali Veli' },
   { $set: { avgMark: 95.0 } },
-  { new: true }, // Güncellenmiş versiyonu döner
+  { new: true } // Güncellenmiş versiyonu döner
 );
 
 // 4. ID ile bul ve güncelle
 const student = await StudentsCollection.findByIdAndUpdate(
-  "64a1b2c3d4e5f6789012345",
+  '64a1b2c3d4e5f6789012345',
   { $set: { onDuty: false, avgMark: 87.5 } },
-  { new: true },
+  { new: true }
 );
 
 // 5. Increment işlemi (sayısal değer artırma)
 const incrementResult = await StudentsCollection.updateOne(
-  { name: "Ali Veli" },
-  { $inc: { avgMark: 5 } }, // avgMark'ı 5 puan artır
+  { name: 'Ali Veli' },
+  { $inc: { avgMark: 5 } } // avgMark'ı 5 puan artır
 );
 ```
 
@@ -1082,19 +1082,19 @@ const incrementResult = await StudentsCollection.updateOne(
 
 ```javascript
 // 1. Tek kayıt sil
-const result = await StudentsCollection.deleteOne({ name: "Ali Veli" });
+const result = await StudentsCollection.deleteOne({ name: 'Ali Veli' });
 
 // 2. Çoklu silme
 const result = await StudentsCollection.deleteMany({ avgMark: { $lt: 50 } });
 
 // 3. Bul ve sil (silinen kaydı döner)
 const deletedStudent = await StudentsCollection.findOneAndDelete({
-  name: "Ali Veli",
+  name: 'Ali Veli',
 });
 
 // 4. ID ile bul ve sil
 const deletedStudent = await StudentsCollection.findByIdAndDelete(
-  "64a1b2c3d4e5f6789012345",
+  '64a1b2c3d4e5f6789012345'
 );
 ```
 
@@ -1107,11 +1107,11 @@ const deletedStudent = await StudentsCollection.findByIdAndDelete(
 const avgByGender = await StudentsCollection.aggregate([
   {
     $group: {
-      _id: "$gender",
-      averageMark: { $avg: "$avgMark" },
+      _id: '$gender',
+      averageMark: { $avg: '$avgMark' },
       count: { $sum: 1 },
-      maxMark: { $max: "$avgMark" },
-      minMark: { $min: "$avgMark" },
+      maxMark: { $max: '$avgMark' },
+      minMark: { $min: '$avgMark' },
     },
   },
   { $sort: { averageMark: -1 } },
@@ -1124,15 +1124,15 @@ const ageStats = await StudentsCollection.aggregate([
       _id: {
         $switch: {
           branches: [
-            { case: { $lt: ["$age", 20] }, then: "18-19" },
-            { case: { $lt: ["$age", 25] }, then: "20-24" },
-            { case: { $gte: ["$age", 25] }, then: "25+" },
+            { case: { $lt: ['$age', 20] }, then: '18-19' },
+            { case: { $lt: ['$age', 25] }, then: '20-24' },
+            { case: { $gte: ['$age', 25] }, then: '25+' },
           ],
-          default: "Bilinmeyen",
+          default: 'Bilinmeyen',
         },
       },
       count: { $sum: 1 },
-      avgMark: { $avg: "$avgMark" },
+      avgMark: { $avg: '$avgMark' },
     },
   },
 ]);
@@ -1141,9 +1141,9 @@ const ageStats = await StudentsCollection.aggregate([
 const dutyStats = await StudentsCollection.aggregate([
   {
     $group: {
-      _id: "$onDuty",
+      _id: '$onDuty',
       count: { $sum: 1 },
-      averageMark: { $avg: "$avgMark" },
+      averageMark: { $avg: '$avgMark' },
     },
   },
 ]);
@@ -1162,16 +1162,16 @@ const dutyStats = await StudentsCollection.aggregate([
 // Validation hatası örneği:
 try {
   const student = await StudentsCollection.create({
-    name: "Test",
-    age: "invalid", // Hata: number olmalı
-    gender: "invalid", // Hata: enum'da yok
+    name: 'Test',
+    age: 'invalid', // Hata: number olmalı
+    gender: 'invalid', // Hata: enum'da yok
     // avgMark eksik - Hata: required
   });
 } catch (error) {
   console.log(error.errors); // Validation hataları
 
   // Specific error handling
-  if (error.name === "ValidationError") {
+  if (error.name === 'ValidationError') {
     Object.keys(error.errors).forEach((key) => {
       console.log(`${key}: ${error.errors[key].message}`);
     });
@@ -1183,24 +1183,24 @@ try {
 
 ```javascript
 // Schema'ya middleware ekleyebilirsiniz:
-studentSchema.pre("save", function (next) {
-  console.log("Öğrenci kaydediliyor:", this.name);
+studentSchema.pre('save', function (next) {
+  console.log('Öğrenci kaydediliyor:', this.name);
 
   // Ortalama notun 0-100 arasında olup olmadığını kontrol et
   if (this.avgMark < 0 || this.avgMark > 100) {
-    return next(new Error("Ortalama not 0-100 arasında olmalıdır"));
+    return next(new Error('Ortalama not 0-100 arasında olmalıdır'));
   }
 
   next();
 });
 
-studentSchema.post("save", function (doc) {
-  console.log("Öğrenci kaydedildi:", doc.name);
+studentSchema.post('save', function (doc) {
+  console.log('Öğrenci kaydedildi:', doc.name);
 });
 
 // Delete middleware
-studentSchema.pre("remove", function (next) {
-  console.log("Öğrenci siliniyor:", this.name);
+studentSchema.pre('remove', function (next) {
+  console.log('Öğrenci siliniyor:', this.name);
   next();
 });
 ```
@@ -1225,7 +1225,7 @@ studentSchema.methods.toggleDuty = function () {
 // Kullanımı:
 const student = await StudentsCollection.findById(studentId);
 console.log(student.getFullInfo());
-console.log("Başarılı öğrenci mi?", student.isHighAchiever());
+console.log('Başarılı öğrenci mi?', student.isHighAchiever());
 await student.toggleDuty();
 ```
 
@@ -1245,8 +1245,8 @@ studentSchema.statics.getAverageMarkByGender = function () {
   return this.aggregate([
     {
       $group: {
-        _id: "$gender",
-        averageMark: { $avg: "$avgMark" },
+        _id: '$gender',
+        averageMark: { $avg: '$avgMark' },
         count: { $sum: 1 },
       },
     },
@@ -1254,7 +1254,7 @@ studentSchema.statics.getAverageMarkByGender = function () {
 };
 
 // Kullanımı:
-const maleStudents = await StudentsCollection.findByGender("male");
+const maleStudents = await StudentsCollection.findByGender('male');
 const topStudents = await StudentsCollection.getTopStudents(5);
 const genderStats = await StudentsCollection.getAverageMarkByGender();
 ```
@@ -1296,11 +1296,11 @@ export const getStudentStatsByGender = async () => {
   return await StudentsCollection.aggregate([
     {
       $group: {
-        _id: "$gender",
+        _id: '$gender',
         count: { $sum: 1 },
-        averageMark: { $avg: "$avgMark" },
+        averageMark: { $avg: '$avgMark' },
         highAchievers: {
-          $sum: { $cond: [{ $gte: ["$avgMark", 85] }, 1, 0] },
+          $sum: { $cond: [{ $gte: ['$avgMark', 85] }, 1, 0] },
         },
       },
     },
@@ -1311,8 +1311,8 @@ export const getStudentStatsByGender = async () => {
 export const searchStudents = async (searchTerm) => {
   return await StudentsCollection.find({
     $or: [
-      { name: { $regex: searchTerm, $options: "i" } },
-      { gender: { $regex: searchTerm, $options: "i" } },
+      { name: { $regex: searchTerm, $options: 'i' } },
+      { gender: { $regex: searchTerm, $options: 'i' } },
     ],
   });
 };
@@ -1321,7 +1321,7 @@ export const searchStudents = async (searchTerm) => {
 export const updateMarksByGender = async (gender, markIncrease) => {
   return await StudentsCollection.updateMany(
     { gender: gender },
-    { $inc: { avgMark: markIncrease } },
+    { $inc: { avgMark: markIncrease } }
   );
 };
 ```
