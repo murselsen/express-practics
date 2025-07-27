@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
 const studentSchema = new Schema(
   {
@@ -13,7 +13,7 @@ const studentSchema = new Schema(
     gender: {
       type: String,
       required: true,
-      enum: ["male", "female", "other"],
+      enum: ['male', 'female', 'other'],
     },
     avgMark: {
       type: Number,
@@ -28,8 +28,8 @@ const studentSchema = new Schema(
   {
     timestamps: true,
     versionKey: false,
-  },
+  }
 );
 
-const StudentsCollection = model("students", studentSchema);
+const StudentsCollection = model('students', studentSchema);
 export default StudentsCollection;
