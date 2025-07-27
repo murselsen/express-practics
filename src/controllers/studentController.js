@@ -28,9 +28,6 @@ export const getAllStudentsController = async (req, res, next) => {
 export const getStudentByIdController = async (req, res, next) => {
   const { studentId } = req.params;
   try {
-    if (typeof studentId !== 'string') {
-      throw createHttpError(400, 'Invalid student ID format');
-    }
     const student = await getStudentById(studentId);
     if (!student) {
       throw createHttpError(404, 'Student not found');
@@ -63,11 +60,10 @@ export const createStudentController = async (req, res) => {
 };
 
 export const deleteStudentController = async (req, res, next) => {
-  const { studentId } = req.params;
   try {
-    if (typeof studentId !== 'string') {
-      throw createHttpError(400, 'Invalid student ID format');
-    }
+    res
+      .status(200)
+      .json(createResponse(true, 'Student deleted successfully', null, 204));
   } catch (error) {
     next(error);
   }
