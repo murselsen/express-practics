@@ -60,7 +60,9 @@ export const createStudentController = async (req, res) => {
 };
 
 export const deleteStudentController = async (req, res, next) => {
+  const { studentId } = req.params;
   try {
+    await deleteStudent(studentId);
     res
       .status(200)
       .json(createResponse(true, 'Student is deleted successfully', null, 204));
@@ -68,3 +70,5 @@ export const deleteStudentController = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateStudentController = async (req, res, next) => {};

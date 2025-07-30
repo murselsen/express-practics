@@ -4,19 +4,23 @@ import {
   deleteStudentController,
   getAllStudentsController,
   getStudentByIdController,
+  updateStudentController,
 } from '../controllers/studentController.js';
-
-import validateParams from '../middlewares/validateParams.js';
 
 const studentRouter = Router();
 
+// Tüm Öğrencileri Getir
 studentRouter.get('/', getAllStudentsController);
 
-studentRouter.get('/:studentId', [validateParams, getStudentByIdController]);
+// Öğrenci ID'sine Göre Öğrenci Getir
+studentRouter.get('/:studentId', getStudentByIdController);
 
+// Yeni Öğrenci Oluştur
 studentRouter.post('/', createStudentController);
 
-// studentRouter.delete('/:studentId');
-studentRouter.delete('/:studentId', [validateParams, deleteStudentController]);
+// Öğrenci Sil
+studentRouter.delete('/:studentId', deleteStudentController);
+
+studentRouter.put('/:studentId', updateStudentController);
 
 export default studentRouter;

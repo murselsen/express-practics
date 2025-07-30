@@ -8,11 +8,14 @@ export const getAllStudents = async () => {
 };
 
 export const getStudentById = async (id) => {
+  if (!isValidObjectId(id)) {
+    return null;
+  }
   console.log(`ID: ${id} Typeof ID: ${typeof id}`);
   const student = await StudentsCollection.findById(id);
   console.log('Student:', student);
   if (!student) {
-    return [];
+    return null;
   }
   return student;
 };
@@ -21,7 +24,7 @@ export const getStudentByName = async (name) => {
   const student = await StudentsCollection.findOne({ name: name });
   console.log('Student by Name:', student);
   if (!student) {
-    return false;
+    return null;
   }
   return student;
 };
@@ -42,10 +45,13 @@ export const createStudent = async (studentData) => {
 };
 
 export const deleteStudent = async (id) => {
+  if (!isValidObjectId(id)) {
+    return null;
+  }
   const student = await getStudentById(id);
   if (!student) {
     console.log(`Student with ID ${id} not found.`);
-    return false;
+    return null;
   }
   await StudentsCollection.findByIdAndDelete(id);
   console.log(`Student with ID ${id} deleted successfully.`);
