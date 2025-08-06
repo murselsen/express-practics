@@ -3,26 +3,22 @@ import StudentsCollection from '../db/models/students.js';
 
 export const getAllStudents = async () => {
   const allStudents = await StudentsCollection.find();
-  console.log('All Students:', allStudents);
   return allStudents;
 };
 
 export const getStudentById = async (id) => {
-  if (!isValidObjectId(id)) {
-    return null;
-  }
+  if (!isValidObjectId(id)) return null;
+
   console.log(`ID: ${id} Typeof ID: ${typeof id}`);
   const student = await StudentsCollection.findById(id);
-  console.log('Student:', student);
   if (!student) {
     return null;
   }
   return student;
 };
-// öğrenci e-posta ile kontrolü var mı
+// This function is used to find a student by their name
 export const getStudentByName = async (name) => {
   const student = await StudentsCollection.findOne({ name: name });
-  console.log('Student by Name:', student);
   if (!student) {
     return null;
   }
@@ -38,22 +34,36 @@ export const isStudentExists = async (name) => {
 };
 
 export const createStudent = async (studentData) => {
-  console.log('Creating student with data:', studentData);
   const newStudent = await StudentsCollection.create(studentData);
-  console.log('New Student Created:', newStudent);
   return newStudent;
 };
 
 export const deleteStudent = async (id) => {
-  if (!isValidObjectId(id)) {
-    return null;
-  }
+  if (!isValidObjectId(id)) return null;
+
   const student = await getStudentById(id);
   if (!student) {
-    console.log(`Student with ID ${id} not found.`);
     return null;
   }
   await StudentsCollection.findByIdAndDelete(id);
-  console.log(`Student with ID ${id} deleted successfully.`);
   return true;
+};
+
+export const updateStudent = async (id, studentData, options = {}) => {
+  if (!isValidObjectId(id)) return null;
+
+  const rawResult = await StudentsCollection.findOneAndUpdate(
+    { _id: id },
+    studentData,
+    {
+      new: true, // Güncellenmiş veriyi döndür
+      includeResultMetadata: true, // Sonuç metadata'sını dahil et
+      ...options, // Ekstra seçenekler
+    }
+  );
+  console.log('Raw result:', rawResult);
+  if (!rawResult) {
+    return null;
+  }
+  return rawResult;
 };

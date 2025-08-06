@@ -2,17 +2,19 @@
 
 ## 📋 İçindekiler
 
-- [CRUD Nedir?](#crud-nedir)
-- [MongoDB ve Mongoose](#mongodb-ve-mongoose)
-- [Model Oluşturma](#model-oluşturma)
-- [CREATE İşlemleri](#create-işlemleri)
-- [READ İşlemleri](#read-işlemleri)
-- [UPDATE İşlemleri](#update-işlemleri)
-- [DELETE İşlemleri](#delete-işlemleri)
-- [Gelişmiş Sorgular](#gelişmiş-sorgular)
-- [API Endpoint Örnekleri](#api-endpoint-örnekleri)
-- [Best Practices](#best-practices)
-- [Mongoose Model Method'ları](#mongoose-model-methodları)
+- [CRUD Nedir?](#-crud-nedir)
+- [MongoDB ve Mongoose](#-mongodb-ve-mongoose)
+- [Model Oluşturma](#-model-oluşturma)
+- [CREATE İşlemleri](#-create-işlemleri)
+- [READ İşlemleri](#-read-işlemleri)
+- [UPDATE İşlemleri](#️-update-işlemleri)
+  - [Mongoose Güncelleme Argümanları Detaylı Açıklama](#-mongoose-güncelleme-argümanları-detaylı-açıklama)
+- [DELETE İşlemleri](#️-delete-işlemleri)
+- [Gelişmiş Sorgular](#-gelişmiş-sorgular)
+- [API Endpoint Örnekleri](#-api-endpoint-örnekleri)
+- [Best Practices](#️-best-practices)
+- [Örnek Test Senaryosu](#-örnek-test-senaryosu)
+- [Mongoose Model Method'ları Detaylı Açıklama](#-mongoose-model-methodları-detaylı-açıklama)
 
 ---
 
@@ -405,6 +407,400 @@ const student = await Student.findOneAndUpdate(
   { email: 'ahmet@email.com' },
   { $set: { isActive: false } },
   { new: true }
+);
+```
+
+### 🔧 Mongoose Güncelleme Argümanları Detaylı Açıklama
+
+#### **findByIdAndUpdate() / findOneAndUpdate() / updateOne() / updateMany() Options:**
+
+```javascript
+// Tam syntax örneği
+const result = await Model.findByIdAndUpdate(
+  id, // 1. Parametre: Filter (ID veya query object)
+  updateObject, // 2. Parametre: Update operations
+  options // 3. Parametre: Options object
+);
+```
+
+#### **1. Filter Parametresi (İlk Argüman)**
+
+```javascript
+// ID ile filtreleme
+await Student.findByIdAndUpdate('64a1b2c3d4e5f6789012345', updateData);
+
+// Query object ile filtreleme
+await Student.findOneAndUpdate(
+  { email: 'test@email.com' }, // Filter object
+  updateData
+);
+
+// Çoklu koşul
+await Student.updateMany(
+  {
+    age: { $gte: 18 },
+    grade: '12',
+    isActive: true,
+  },
+  updateData
+);
+```
+
+#### **2. Update Parametresi (İkinci Argüman)**
+
+```javascript
+// Direkt alan güncellemesi
+const updateData = {
+  name: 'Yeni İsim',
+  age: 20,
+  gpa: 3.8,
+};
+
+// MongoDB update operators kullanımı
+const updateWithOperators = {
+  $set: {
+    // Alanları ayarla/güncelle
+    name: 'Ahmet',
+    age: 19,
+  },
+  $inc: {
+    // Sayısal değeri artır/azalt
+    avgMark: 5, // avgMark'ı 5 puan artır
+    age: 1, // Yaşı 1 artır
+  },
+  $push: {
+    // Array'e eleman ekle
+    subjects: 'Kimya',
+  },
+  $pull: {
+    // Array'den eleman çıkar
+    subjects: 'Tarih',
+  },
+  $addToSet: {
+    // Array'e tekrar etmeyen eleman ekle
+    subjects: 'Biyoloji',
+  },
+  $unset: {
+    // Alanı sil
+    oldField: '',
+  },
+  $rename: {
+    // Alan adını değiştir
+    oldName: 'newName',
+  },
+  $min: {
+    // Minimum değer ayarla
+    avgMark: 70, // avgMark 70'den küçükse 70 yap
+  },
+  $max: {
+    // Maksimum değer ayarla
+    avgMark: 95, // avgMark 95'ten büyükse 95 yap
+  },
+  $mul: {
+    // Değeri çarp
+    avgMark: 1.1, // avgMark'ı 1.1 ile çarp (%10 artış)
+  },
+};
+```
+
+#### **3. Options Parametresi (Üçüncü Argüman)**
+
+```javascript
+const options = {
+  // === Temel Options ===
+  new: true, // true: güncellenmiş veriyi döndür, false: eski veriyi döndür
+  upsert: false, // true: kayıt yoksa oluştur, false: sadece güncelle
+  runValidators: true, // Schema validation kurallarını çalıştır
+  strict: true, // Schema'da olmayan alanları kabul etme
+  overwrite: false, // true: tüm dökümanı değiştir, false: sadece belirtilen alanları
+
+  // === Gelişmiş Options ===
+  lean: false, // true: plain JavaScript object döndür (Mongoose methods yok)
+  omitUndefined: true, // undefined değerlerini atla
+  timestamps: true, // updatedAt alanını otomatik güncelle
+  rawResult: false, // MongoDB'nin ham response'unu döndür
+  session: null, // Transaction session
+
+  // === Projection ve Population ===
+  select: 'name age avgMark', // Sadece belirtilen alanları döndür
+  populate: 'schoolId', // İlişkili dökümanları doldur
+
+  // === Array Options ===
+  arrayFilters: [
+    // Array elemanlarını filtrele
+    { 'grade.subject': 'Math' },
+  ],
+
+  // === Diğer Options ===
+  context: 'query', // Validation context
+  includeResultMetadata: false, // Metadata bilgilerini dahil et
+  transform: null, // Transform fonksiyonu
+  translateAliases: true, // Alias alanlarını çevir
+};
+```
+
+#### **Pratik Kullanım Örnekleri:**
+
+```javascript
+// 1. Basit güncelleme (sadece yeni veriyi döndür)
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 88.5 },
+  { new: true }
+);
+
+// 2. Validation ile güncelleme
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { age: 17, gender: 'female' },
+  {
+    new: true,
+    runValidators: true, // Schema kurallarını kontrol et
+  }
+);
+
+// 3. Upsert - yoksa oluştur
+const student = await StudentsCollection.findOneAndUpdate(
+  { email: 'new@student.com' },
+  {
+    name: 'Yeni Öğrenci',
+    age: 18,
+    gender: 'male',
+    avgMark: 75,
+  },
+  {
+    new: true,
+    upsert: true, // Yoksa oluştur
+    runValidators: true,
+  }
+);
+
+// 4. Sadece belirli alanları döndür
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 92 },
+  {
+    new: true,
+    select: 'name avgMark updatedAt', // Sadece bu alanları döndür
+  }
+);
+
+// 5. Array güncelleme
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  {
+    $push: {
+      subjects: { $each: ['Fizik', 'Kimya'] }, // Çoklu ekleme
+    },
+  },
+  { new: true }
+);
+
+// 6. Conditional array update
+const updated = await StudentsCollection.findOneAndUpdate(
+  {
+    _id: studentId,
+    'grades.subject': 'Math', // Math dersi var ise
+  },
+  {
+    $set: { 'grades.$.score': 95 }, // O dersin notunu güncelle
+  },
+  { new: true }
+);
+
+// 7. Complex update with multiple operators
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  {
+    $set: {
+      name: 'Updated Name',
+      onDuty: true,
+    },
+    $inc: {
+      avgMark: 2.5, // Notu 2.5 puan artır
+    },
+    $push: {
+      subjects: 'Edebiyat',
+    },
+    $unset: {
+      oldField: '', // Eski alanı kaldır
+    },
+  },
+  {
+    new: true,
+    runValidators: true,
+  }
+);
+
+// 8. Strict mode kapalı (schema dışı alanlar)
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  {
+    avgMark: 85,
+    customField: "Bu alan schema'da yok", // Schema'da olmayan alan
+  },
+  {
+    new: true,
+    strict: false, // Schema dışı alanları kabul et
+  }
+);
+
+// 9. Lean query (performans optimizasyonu)
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 90 },
+  {
+    new: true,
+    lean: true, // Plain JavaScript object döndür (hızlı)
+  }
+);
+
+// 10. Session ile (Transaction)
+const session = await mongoose.startSession();
+await session.withTransaction(async () => {
+  const updated = await StudentsCollection.findByIdAndUpdate(
+    studentId,
+    { avgMark: 88 },
+    {
+      new: true,
+      session: session, // Transaction içinde çalıştır
+    }
+  );
+});
+
+// 11. Raw result (MongoDB'nin ham cevabı)
+const result = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 87 },
+  {
+    new: true,
+    rawResult: true, // { value: document, ok: 1, ... }
+  }
+);
+console.log(result.value); // Güncellenen döküman
+console.log(result.lastErrorObject); // Güncelleme bilgileri
+
+// 12. Population ile güncelleme
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 89 },
+  {
+    new: true,
+    populate: 'schoolId classId', // İlişkili dökümanları doldur
+  }
+);
+```
+
+#### **UpdateMany ve UpdateOne için Özel Options:**
+
+```javascript
+// updateMany için
+const result = await StudentsCollection.updateMany(
+  { grade: '12' }, // Filter
+  { $set: { graduated: true } }, // Update
+  {
+    runValidators: true, // Validation çalıştır
+    timestamps: true, // updatedAt güncelle
+    strict: true, // Schema kurallarına uy
+    arrayFilters: [
+      // Array filtreleme
+      { 'score.subject': 'Math' },
+    ],
+  }
+);
+
+console.log(result.matchedCount); // Eşleşen döküman sayısı
+console.log(result.modifiedCount); // Güncellenen döküman sayısı
+console.log(result.acknowledged); // İşlem onaylandı mı
+
+// updateOne için
+const result = await StudentsCollection.updateOne(
+  { email: 'test@email.com' },
+  { $inc: { avgMark: 5 } },
+  {
+    runValidators: true,
+    upsert: true, // Yoksa oluştur
+  }
+);
+
+console.log(result.matchedCount); // 0 veya 1
+console.log(result.modifiedCount); // 0 veya 1
+console.log(result.upsertedCount); // 0 veya 1 (upsert yapıldıysa)
+console.log(result.upsertedId); // Yeni oluşturulan ID
+```
+
+#### **Error Handling with Options:**
+
+```javascript
+try {
+  const updated = await StudentsCollection.findByIdAndUpdate(
+    'invalid-id', // Geçersiz ID
+    { avgMark: 85 },
+    {
+      new: true,
+      runValidators: true,
+      strict: true,
+    }
+  );
+} catch (error) {
+  // Validation hatası
+  if (error.name === 'ValidationError') {
+    console.log('Validation hatası:', error.message);
+    Object.keys(error.errors).forEach((key) => {
+      console.log(`${key}: ${error.errors[key].message}`);
+    });
+  }
+
+  // Cast hatası (geçersiz ID)
+  if (error.name === 'CastError') {
+    console.log('Geçersiz ID formatı:', error.message);
+  }
+
+  // Strict mode hatası
+  if (error.name === 'StrictModeError') {
+    console.log('Schema dışı alan:', error.message);
+  }
+}
+```
+
+#### **Performance Tips:**
+
+```javascript
+// 1. Sadece gerekli alanları döndür
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 88 },
+  {
+    new: true,
+    select: 'name avgMark', // Sadece gerekli alanlar
+  }
+);
+
+// 2. Lean query kullan (Mongoose overhead yok)
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 88 },
+  {
+    new: true,
+    lean: true, // %20-30 performans artışı
+  }
+);
+
+// 3. Validation'ı sadece gerektiğinde çalıştır
+const updated = await StudentsCollection.findByIdAndUpdate(
+  studentId,
+  { avgMark: 88 }, // Basit güncelleme
+  {
+    new: true,
+    runValidators: false, // Validation atla (hızlı)
+  }
+);
+
+// 4. Bulk operations için updateMany kullan
+const result = await StudentsCollection.updateMany(
+  { grade: '12' },
+  { $set: { status: 'senior' } },
+  { runValidators: false } // Toplu işlemde validation atla
 );
 ```
 

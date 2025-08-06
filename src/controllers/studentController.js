@@ -3,7 +3,9 @@ import {
   getStudentById,
   isStudentExists,
   createStudent,
+  updateStudent,
 } from '../services/students.js';
+import { createStudentSchema } from '../validation/student.js';
 import { createResponse } from '../utils/createResponse.js';
 import createHttpError from 'http-errors';
 
@@ -26,8 +28,8 @@ export const getAllStudentsController = async (req, res, next) => {
 };
 
 export const getStudentByIdController = async (req, res, next) => {
-  const { studentId } = req.params;
   try {
+    const { studentId } = req.params;
     const student = await getStudentById(studentId);
     if (!student) {
       throw createHttpError(404, 'Student not found');
@@ -43,24 +45,26 @@ export const getStudentByIdController = async (req, res, next) => {
 export const createStudentController = async (req, res) => {
   console.log('POST request to /students', req.body);
 
-  const body = req.body;
-  if (!body) {
-    throw createHttpError(400, 'Request body is missing');
-  }
-  const isStudentExistsResult = await isStudentExists(body.name);
-  if (isStudentExistsResult) {
-    throw createHttpError(409, 'Student with this name already exists');
-  }
-  console.log('Creating new student with data:', body);
+  try {
+    const body = req.body;
+    if (!body) throw createHttpError(400, 'Request body is missing');
 
-  await createStudent(body);
-  res
-    .status(201)
-    .json(createResponse(true, 'Student created successfully', body, 201));
+    const isStudentExistsResult = await isStudentExists(body.name);
+    if (isStudentExistsResult) {
+      throw createHttpError(409, 'Student with this name already exists');
+    }
+    console.log('Creating new student with data:', body);
+
+    await createStudent(body);
+    res
+      .status(201)
+      .json(createResponse(true, 'Student created successfully', body, 201));
+  } catch (error) {
+    next(error);
+  }
 };
 
 export const deleteStudentController = async (req, res, next) => {
-  const { studentId } = req.params;
   try {
     await deleteStudent(studentId);
     res
@@ -71,4 +75,48 @@ export const deleteStudentController = async (req, res, next) => {
   }
 };
 
-export const updateStudentController = async (req, res, next) => {};
+export const upsertStudentController = async (req, res, next) => {
+  try {
+    const { studentId } = req.params;
+    const studentData = req.body;
+
+    const result = await updateStudent(studentId, studentData, {
+      upsert: true, // Eğer öğrenci yoksa yeni bir tane oluştur
+    });
+    if (!result) {
+      throw createHttpError(404, 'Student not found');
+    }
+
+    const statusCode = result.isNew ? 201 : 200;
+    res
+      .status(statusCode)
+      .json(
+        createResponse(
+          true,
+          'Student upsert a successfully',
+          result,
+          statusCode
+        )
+      );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const patchStudentController = async (req, res, next) => {
+  try {
+    const { studentId } = req.params;
+    const studentData = req.body;
+
+    const result = await updateStudent(studentId, studentData);
+    if (!result) {
+      throw createHttpError(404, 'Student not found');
+    }
+
+    res
+      .status(200)
+      .json(createResponse(true, 'Student updated successfully', result, 200));
+  } catch (error) {
+    next(error);
+  }
+};
