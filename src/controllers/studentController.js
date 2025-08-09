@@ -5,15 +5,21 @@ import {
   createStudent,
   updateStudent,
 } from '../services/students.js';
-import { createStudentSchema } from '../validation/student.js';
 import { createResponse } from '../utils/createResponse.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+
 import createHttpError from 'http-errors';
 
 // Controllers
 // Get all students
 export const getAllStudentsController = async (req, res, next) => {
   try {
-    const students = await getAllStudents();
+    const { page, perPage } = parsePaginationParams(req.query);
+
+    const students = await getAllStudents({
+      page,
+      perPage,
+    });
     if (!students || students.length === 0) {
       throw createHttpError(404, 'No students found');
     }

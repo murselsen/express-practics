@@ -1,9 +1,22 @@
 import { isValidObjectId } from 'mongoose';
 import StudentsCollection from '../db/models/students.js';
 
-export const getAllStudents = async () => {
-  const allStudents = await StudentsCollection.find();
-  return allStudents;
+export const getAllStudents = async ({ page, perPage }) => {
+  const limit = perPage;
+  const skip = (page - 1) * perPage;
+
+  
+  const studentsQuery = StudentsCollection.find();
+  const studentsCount = await StudentsCollection.find()
+  .merge(studentsQuery)
+  .countDocuments();
+  
+  const students = await studentsQuery.skip(skip).limit(limit).exec();
+  console.log(`Fetching students with limit: ${limit}, skip: ${skip}`);
+
+  console.log(`  students found: ${students}`);
+  return true;
+  
 };
 
 export const getStudentById = async (id) => {
