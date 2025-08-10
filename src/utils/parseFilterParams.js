@@ -22,17 +22,17 @@ const parseNumber = (number) => {
 export const parseFilterParams = (query) => {
   const { gender, maxAge, minAge, maxAvgMark, minAvgMark } = query;
 
-  const parseGender = parseGender(gender);
-  const parseMaxAge = parseNumber(maxAge);
-  const parseMinAge = parseNumber(minAge);
-  const parseMaxAvgMark = parseNumber(maxAvgMark);
-  const parseMinAvgMark = parseNumber(minAvgMark);
+  const parsedGender = parseGender(gender);
+  const parsedMaxAge = parseNumber(maxAge);
+  const parsedMinAge = parseNumber(minAge);
+  const parsedMaxAvgMark = parseNumber(maxAvgMark);
+  const parsedMinAvgMark = parseNumber(minAvgMark);
 
   return {
-    gender: parseGender,
-    maxAge: parseMaxAge,
-    minAge: parseMinAge,
-    maxAvgMark: parseMaxAvgMark,
-    minAvgMark: parseMinAvgMark,
+    gender: parsedGender,
+    maxAge: parsedMaxAge,
+    minAge: parsedMinAge,
+    maxAvgMark: parsedMaxAvgMark,
+    minAvgMark: parsedMinAvgMark,
   };
 };

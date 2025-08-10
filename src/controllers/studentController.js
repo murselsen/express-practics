@@ -6,6 +6,7 @@ import {
   updateStudent,
 } from '../services/students.js';
 import { createResponse } from '../utils/createResponse.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import createHttpError from 'http-errors';
@@ -15,12 +16,14 @@ import createHttpError from 'http-errors';
 export const getAllStudentsController = async (req, res, next) => {
   try {
     const { page, perPage } = parsePaginationParams(req.query);
-    const { sortBy, sortOrder } = parseSortParams(req.query.sort);
+    const { sortBy, sortOrder } = parseSortParams(req.query);
+    const filter = parseFilterParams(req.query);
     const students = await getAllStudents({
       page,
       perPage,
       sortBy,
       sortOrder,
+      filter,
     });
     if (!students || students.length === 0) {
       throw createHttpError(404, 'No students found');
