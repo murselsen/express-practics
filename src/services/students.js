@@ -15,7 +15,6 @@ export const getAllStudents = async ({ page, perPage }) => {
   const students = await studentsQuery.skip(skip).limit(limit).exec();
   console.log(`Fetching students with limit: ${limit}, skip: ${skip}`);
 
-
   const paginationData = calculatePaginationData(studentsCount, perPage, page);
   return {
     students,

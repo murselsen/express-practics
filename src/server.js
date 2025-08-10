@@ -1,6 +1,6 @@
 // Modules
 import express from 'express';
-import pino from 'pino-http';
+// import pino from 'pino-http';
 import cors from 'cors';
 
 // Utils
@@ -22,13 +22,13 @@ export const startServer = () => {
   app.use(express.json());
   app.use(cors());
 
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    })
-  );
+  //   app.use(
+  //     pino({
+  //       transport: {
+  //         target: 'pino-pretty',
+  //       },
+  //     })
+  //   );
 
   app.get('/', (req, res) => {
     res.json(createResponse(true, 'Welcome to the Express API', null, 200));
