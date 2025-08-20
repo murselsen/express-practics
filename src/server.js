@@ -2,12 +2,13 @@
 import express from 'express';
 // import pino from 'pino-http';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 // Utils
 import { env } from './utils/env.js';
 
-// Services
-import studentRouter from './routers/studentRouter.js';
+// Routers
+import appRouters from './routers/index.js';
 
 // Middlewares
 import notFoundMiddleware from './middlewares/notFoundMiddleware.js';
@@ -21,20 +22,15 @@ export const startServer = () => {
 
   app.use(express.json());
   app.use(cors());
+  app.use(cookieParser());
 
-  //   app.use(
-  //     pino({
-  //       transport: {
-  //         target: 'pino-pretty',
-  //       },
-  //     })
-  //   );
+  //   app.use(pino({ transport: { target: 'pino-pretty' } }));
 
   app.get('/', (req, res) => {
     res.json(createResponse(true, 'Welcome to the Express API', null, 200));
   });
 
-  app.use('/students', studentRouter);
+  app.use(appRouters);
 
   app.use(notFoundMiddleware);
   app.use(serverErrorMiddleware);

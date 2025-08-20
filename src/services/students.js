@@ -20,8 +20,8 @@ export const getAllStudents = async ({
   // Filters
   if (filter.gender) {
     // eq: eşit
-    studentsQuery.where('gender').equals(filter.gender);
-  } 
+    studentsQuery.where('gender').in(filter.gender);
+  }
   if (filter.minAge) {
     // gte : büyük veya eşit
     studentsQuery.where('age').gte(filter.minAge);

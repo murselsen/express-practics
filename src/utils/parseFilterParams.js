@@ -3,11 +3,20 @@ const parseGender = (gender) => {
 
   if (!isString) return;
 
-  const isGender = (gender) => ['male', 'female', 'other'].includes(gender);
+  const arrGender = [];
+  const splitGender = gender.split(',');
+  console.log('Slipt Gender:', splitGender);
 
-  if (isGender(gender)) {
-    return gender;
-  }
+  const isGender = (gender) => ['male', 'female', 'other'].includes(gender);
+  splitGender.forEach((g) => {
+    if (g !== ' ' && isGender(g)) {
+      arrGender.push(g);
+    }
+  });
+
+  if (arrGender.length === 0) return;
+
+  return arrGender;
 };
 
 const parseNumber = (number) => {
@@ -23,6 +32,8 @@ export const parseFilterParams = (query) => {
   const { gender, maxAge, minAge, maxAvgMark, minAvgMark } = query;
 
   const parsedGender = parseGender(gender);
+  console.log('Parsed Gender:', parsedGender);
+
   const parsedMaxAge = parseNumber(maxAge);
   const parsedMinAge = parseNumber(minAge);
   const parsedMaxAvgMark = parseNumber(maxAvgMark);
