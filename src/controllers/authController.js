@@ -1,4 +1,9 @@
-import { registerUser, loginUser, logoutUser } from '../services/auth.js';
+import {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshUsersSession,
+} from '../services/auth.js';
 import createHttpError from 'http-errors';
 
 import { createResponse } from '../utils/createResponse.js';
@@ -11,9 +16,16 @@ export const registerUserController = async (req, res, next) => {
     if (!newUser) {
       throw createHttpError(400, 'User registration failed');
     }
-    res
-      .status(201)
-      .json(createResponse(true, 'User registered successfully', newUser, 201));
+    res.status(201).json(
+      createResponse(
+        true,
+        'User registered successfully',
+        {
+          accessToken: newUser.accessToken,
+        },
+        201
+      )
+    );
   } catch (error) {
     next(error);
   }
@@ -22,12 +34,12 @@ export const registerUserController = async (req, res, next) => {
 export const loginUserController = async (req, res, next) => {
   const session = await loginUser(req.body);
 
-  res.cookie('refreshToken', session.session.refreshToken, {
+  res.cookie('refreshToken', session.refreshToken, {
     httpOnly: true, // Yalnızca web sunucusu tarafından erişilebilir
     expires: new Date(Date.now() + ONE_DAY), // expires in 1 day
   });
 
-  res.cookie('sessionId', session.session._id, {
+  res.cookie('sessionId', session._id, {
     httpOnly: true, // Yalnızca web sunucusu tarafından erişilebilir
     expires: new Date(Date.now() + ONE_DAY), // expires in 1 day
   });
@@ -36,9 +48,7 @@ export const loginUserController = async (req, res, next) => {
       true,
       'User logged in successfully',
       {
-        user: session.user,
-        // session: session.session,
-        accessToken: session.session.accessToken,
+        accessToken: session.accessToken,
       },
       200
     )
@@ -51,11 +61,42 @@ export const logoutUserController = async (req, res) => {
       await logoutUser(req.cookies.sessionId);
     }
     req.clearCookie('sessionId');
-      req.clearCookie('refreshToken');
-      
-      
+    req.clearCookie('refreshToken');
+    console.log('Session cleared successfully');
+
     res.status(204).send();
   } catch (error) {
     throw createHttpError(400, 'No session found for logout');
+  }
+};
+
+const setupSessionCookies = (res, session) => {
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + ONE_DAY),
+  });
+};
+
+export const refreshUserSessionController = async (req, res, next) => {
+  try {
+    const { sessionId, refreshToken } = req.cookies;
+    const session = await refreshUsersSession({
+      sessionId,
+      refreshToken,
+    });
+
+    setupSessionCookies(res, session);
+
+    res.status(200).json(
+      createResponse(true, 'Successfully refreshed a session!', {
+        accessToken: session.accessToken,
+      })
+    );
+  } catch (error) {
+    next(createHttpError(401, 'Session refresh failed', error));
   }
 };
