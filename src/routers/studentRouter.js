@@ -16,27 +16,53 @@ import {
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 
+// Users Roles Middleware
+import { checkRoles } from '../middlewares/checkRoles.js';
+// User Roles
+import { ROLES } from '../constants/index.js';
+
 const studentRouter = Router();
 
-// Tüm Öğrencileri Getir
-studentRouter.get('/', getAllStudentsController);
+// Tüm Öğrencileri Getir | Sadece Öğretmen Erişebilir
+studentRouter.get('/', checkRoles(ROLES.TEACHER), getAllStudentsController);
 
 // Öğrenci ID'sine Göre Öğrenci Getir
-studentRouter.get('/:studentId', isValidId, getStudentByIdController);
+studentRouter.get(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
+  isValidId,
+  getStudentByIdController
+);
 
 // Yeni Öğrenci Oluştur
 studentRouter.post(
   '/',
+  checkRoles(ROLES.TEACHER),
   validateBody(createStudentSchema),
   createStudentController
 );
 
 // Öğrenci Sil
-studentRouter.delete('/:studentId', isValidId, deleteStudentController);
+studentRouter.delete(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER),
+  isValidId,
+  deleteStudentController
+);
 
-studentRouter.put('/:studentId', isValidId, upsertStudentController);
+// Öğrenci Güncelle (Tamamen Değiştir)
+studentRouter.put(
+  '/:studentId',
+  checkRoles(ROLES.TEACHER),
+  isValidId,
+  upsertStudentController
+);
+
+// Öğrenci Kısmi Güncelle
+//
 studentRouter.patch(
   '/:studentId',
+  checkRoles(ROLES.TEACHER, ROLES.PARENT),
   isValidId,
   validateBody(updateStudentSchema),
   patchStudentController
