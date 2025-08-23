@@ -1,30 +1,39 @@
 import { model, Schema } from 'mongoose';
+import { ROLES } from '../../constants/index.js';
 
 const usersSchema = new Schema(
-  {
-    name: {
-      type: String,
-      required: true,
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true
+        },
+        password: {
+            type: String,
+            required: true,
+        },
+        role: {
+            type: String,
+            enum: [ROLES.TEACHER, ROLES.PARENT],
+            default: ROLES.PARENT,
+        },
     },
-    email: { type: String, required: true, unique: true },
-    password: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    timestamps: true,
-    versionKey: false,
-  }
+    {
+        timestamps: true,
+        versionKey: false,
+    }
 );
 
-
-// 
+//
 usersSchema.methods.toJSON = function () {
-  const obj = this.toObject();
-  delete obj.password;
-  console.log('User object without password:', obj);
-  return obj;
+    const obj = this.toObject();
+    delete obj.password;
+    console.log('User object without password:', obj);
+    return obj;
 };
 
 const UsersCollection = model('users', usersSchema);
