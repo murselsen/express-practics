@@ -10,6 +10,7 @@ export const authenticate = async (req, res, next) => {
     return;
   }
 
+  console.log(authHeader);
   const bearer = authHeader.split(' ')[0];
   const token = authHeader.split(' ')[1];
 
