@@ -29,6 +29,10 @@ export const createStudentSchema = Joi.object({
     'boolean.base': 'OnDuty should be a boolean value',
     'any.required': 'OnDuty status is required',
   }),
+  parentId: Joi.string().required().messages({
+    'string.base': 'Parent ID should be a string',
+    'any.required': 'Parent ID is required',
+  }),
 });
 
 export const updateStudentSchema = Joi.object({
