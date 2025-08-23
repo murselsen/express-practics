@@ -8,16 +8,16 @@ import {
 import { validateBody } from '../middlewares/validateBody.js';
 import { loginUserSchema, registerUserSchema } from '../validation/auth.js';
 
-const authRouter = express.Router();
+const router = express.Router();
 
-authRouter.post(
+router.post(
   '/register',
   validateBody(registerUserSchema),
   registerUserController
 );
 
-authRouter.post('/login', validateBody(loginUserSchema), loginUserController);
-authRouter.post('/refresh', refreshUserSessionController);
+router.post('/login', validateBody(loginUserSchema), loginUserController);
+router.post('/refresh', refreshUserSessionController);
+router.post('/logout', logoutUserController);
 
-authRouter.post('/logout', logoutUserController);
-export default authRouter;
+export default router;
