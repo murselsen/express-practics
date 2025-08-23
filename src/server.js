@@ -29,7 +29,6 @@ export const startServer = () => {
   app.get('/', (req, res) => {
     res.json(createResponse(true, 'Welcome to the Express API', null, 200));
   });
-
   app.use(appRouters);
 
   app.use(notFoundMiddleware);
