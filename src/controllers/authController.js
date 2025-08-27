@@ -3,6 +3,8 @@ import {
   loginUser,
   logoutUser,
   refreshUsersSession,
+  requestResetToken,
+  resetPassword,
 } from '../services/auth.js';
 import createHttpError from 'http-errors';
 
@@ -60,8 +62,8 @@ export const logoutUserController = async (req, res) => {
     if (req.cookies.sessionId) {
       await logoutUser(req.cookies.sessionId);
     }
-    req.clearCookie('sessionId');
-    req.clearCookie('refreshToken');
+    res.clearCookie('sessionId');
+    res.clearCookie('refreshToken');
     console.log('Session cleared successfully');
 
     res.status(204).send();
@@ -98,5 +100,34 @@ export const refreshUserSessionController = async (req, res, next) => {
     );
   } catch (error) {
     next(createHttpError(401, 'Session refresh failed', error));
+  }
+};
+
+export const requestResetEmailController = async (req, res, next) => {
+  try {
+    await requestResetToken(req.body.email);
+    res
+      .status(200)
+      .json(
+        createResponse(
+          true,
+          'Reset password email was successfully sent!',
+          {},
+          200
+        )
+      );
+  } catch (error) {
+    next(createHttpError(500, error));
+  }
+};
+
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    await resetPassword(req.body);
+    res
+      .status(200)
+      .json(createResponse(true, 'Password was successfully reset!', {}, 200));
+  } catch (error) {
+    next(createHttpError(500, error));
   }
 };
