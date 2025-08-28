@@ -18,6 +18,7 @@ import handlebars from 'handlebars';
 import fs from 'fs/promises';
 import path from 'path';
 import { env } from '../utils/env.js';
+import { create } from 'domain';
 
 export const registerUser = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
@@ -31,6 +32,19 @@ export const registerUser = async (payload) => {
   await UsersCollection.create(payload);
   payload.password = notEncryptedPassword; // Şifreyi tekrar eski haline getir
   await loginUser(payload);
+};
+
+const createSession = () => {
+  // accessToken ve refreshToken oluştur
+  const accessToken = crypto.randomBytes(30).toString('base64');
+  const refreshToken = crypto.randomBytes(30).toString('base64');
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenVaildUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenVaildUntil: new Date(Date.now() + ONE_DAY),
+  };
 };
 
 export const loginUser = async (payload) => {
@@ -51,36 +65,22 @@ export const loginUser = async (payload) => {
 
   // eski oturum kaydı sil
   await SessionCollection.deleteOne({ userId: userData._id });
-  // accessToken ve refreshToken oluştur
-  const accessToken = crypto.randomBytes(30).toString('base64');
-  const refreshToken = crypto.randomBytes(30).toString('base64');
-  console.log('loginUser - accessToken:', accessToken);
-  console.log('loginUser - refreshToken:', refreshToken);
+
+
+  const newSession = createSession();
+
   // yeni oturum kaydı oluştur
   return await SessionCollection.create({
     userId: userData._id,
-    accessToken,
-    refreshToken,
-    accessTokenVaildUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenVaildUntil: new Date(Date.now() + ONE_DAY),
+    accessToken: newSession.accessToken,
+    refreshToken: newSession.refreshToken,
+    accessTokenVaildUntil: newSession.accessTokenVaildUntil,
+    refreshTokenVaildUntil: newSession.refreshTokenVaildUntil,
   });
 };
 
 export const logoutUser = async (sessionId) => {
   await SessionCollection.deleteOne({ _id: sessionId });
-};
-
-const createSession = () => {
-  // accessToken ve refreshToken oluştur
-  const accessToken = crypto.randomBytes(30).toString('base64');
-  const refreshToken = crypto.randomBytes(30).toString('base64');
-
-  return {
-    accessToken,
-    refreshToken,
-    accessTokenVaildUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenVaildUntil: new Date(Date.now() + ONE_DAY),
-  };
 };
 
 export const refreshUsersSession = async ({ sessionId, refreshToken }) => {

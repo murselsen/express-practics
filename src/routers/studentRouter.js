@@ -20,7 +20,8 @@ import { isValidId } from '../middlewares/isValidId.js';
 import { checkRoles } from '../middlewares/checkRoles.js';
 // User Roles
 import { ROLES } from '../constants/index.js';
-
+// File Upload Middleware
+import upload from '../middlewares/multer.js';
 const studentRouter = Router();
 
 // Tüm Öğrencileri Getir | Sadece Öğretmen Erişebilir
@@ -38,6 +39,7 @@ studentRouter.get(
 studentRouter.post(
   '/',
   checkRoles(ROLES.TEACHER),
+  upload.single('profileImage'),
   validateBody(createStudentSchema),
   createStudentController
 );
@@ -64,6 +66,7 @@ studentRouter.patch(
   '/:studentId',
   checkRoles(ROLES.TEACHER, ROLES.PARENT),
   isValidId,
+  upload.single('profileImage'),
   validateBody(updateStudentSchema),
   patchStudentController
 );
