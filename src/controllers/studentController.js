@@ -10,6 +10,7 @@ import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import createHttpError from 'http-errors';
+import saveFile from '../utils/saveFile.js';
 
 // Controllers
 // Get all students
@@ -66,7 +67,14 @@ export const createStudentController = async (req, res) => {
     }
     console.log('Creating new student with data:', body);
 
-    await createStudent(body);
+      let photo;
+
+      if (req.file) { 
+        photo = await saveFile(req.file);
+      }
+
+      
+    await createStudent({photo ,...body});
     res
       .status(201)
       .json(createResponse(true, 'Student created successfully', body, 201));
@@ -118,8 +126,19 @@ export const patchStudentController = async (req, res, next) => {
   try {
     const { studentId } = req.params;
     const studentData = req.body;
+    const photo = req.file;
 
-    const result = await updateStudent(studentId, studentData);
+    let photoUrl;
+
+    if (photo) {
+      photoUrl = await saveFile(photo);
+      console.log('Photo URL:', photoUrl);
+    }
+
+    const result = await updateStudent(studentId, {
+      studentData,
+      photo: photoUrl,
+    });
     if (!result) {
       throw createHttpError(404, 'Student not found');
     }

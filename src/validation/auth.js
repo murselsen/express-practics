@@ -19,6 +19,10 @@ export const registerUserSchema = Joi.object({
     'string.empty': 'Password cannot be empty',
     'string.min': 'Password must be at least 8 characters long',
   }),
+  role: Joi.string().valid('teacher', 'parent').optional().messages({
+    'string.base': 'Role must be a string',
+    'any.only': 'Role must be either teacher or parent',
+  }),
 });
 
 export const loginUserSchema = Joi.object({

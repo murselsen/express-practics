@@ -10,6 +10,9 @@ import { env } from './utils/env.js';
 // Routers
 import appRouters from './routers/index.js';
 
+// UPLOAD Photo Directory
+import { UPLOAD_DIR } from './constants/index.js';
+
 // Middlewares
 import notFoundMiddleware from './middlewares/notFoundMiddleware.js';
 import serverErrorMiddleware from './middlewares/serverErrorMiddleware.js';
@@ -23,7 +26,7 @@ export const startServer = () => {
   app.use(express.json());
   app.use(cors());
   app.use(cookieParser());
-
+  app.use('/uploads', express.static(UPLOAD_DIR));
   //   app.use(pino({ transport: { target: 'pino-pretty' } }));
 
   app.get('/', (req, res) => {

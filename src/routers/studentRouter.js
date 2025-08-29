@@ -39,7 +39,7 @@ studentRouter.get(
 studentRouter.post(
   '/',
   checkRoles(ROLES.TEACHER),
-  upload.single('profileImage'),
+  upload.single('photo'),
   validateBody(createStudentSchema),
   createStudentController
 );
@@ -57,6 +57,7 @@ studentRouter.put(
   '/:studentId',
   checkRoles(ROLES.TEACHER),
   isValidId,
+  upload.single('photo'),
   upsertStudentController
 );
 
@@ -66,7 +67,7 @@ studentRouter.patch(
   '/:studentId',
   checkRoles(ROLES.TEACHER, ROLES.PARENT),
   isValidId,
-  upload.single('profileImage'),
+  upload.single('photo'),
   validateBody(updateStudentSchema),
   patchStudentController
 );

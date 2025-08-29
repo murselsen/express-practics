@@ -24,6 +24,10 @@ const studentSchema = new Schema(
       required: true,
       default: false,
     },
+    photo: {
+      type: String,
+      default: '#',
+    },
     parentId: { type: Schema.Types.ObjectId, ref: 'users' },
   },
   {
